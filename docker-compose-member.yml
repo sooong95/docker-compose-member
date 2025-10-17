@@ -67,11 +67,6 @@ services:
     container_name: sj-member-service
     ports:
       - "8082:8080"
-    depends_on:
-      - sj-gateway
-      - sj-member-db
-      - sj-config-server
-    restart: on-failure  # 실패시 재시작
 
 volumes:
   rabbitmq_data:
