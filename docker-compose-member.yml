@@ -1,25 +1,5 @@
 version: '3'
 services:
-#  prometheus:
-#    image: prom/prometheus:latest
-#    container_name: prometheus
-#    ports:
-#      - "9090:9090"
-#    volumes:
-#      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-#    command:
-#      - '--config.file=/etc/prometheus/prometheus.yml'
-#
-#  grafana:
-#    image: grafana/grafana:latest
-#    container_name: grafana
-#    ports:
-#      - "3000:3000"
-#    environment:
-#      - GF_SECURITY_ADMIN_USER=admin
-#      - GF_SECURITY_ADMIN_PASSWORD=admin
-#    depends_on:
-#      - prometheus
 
   rabbitmq:
     image: rabbitmq:3-management   # 관리 UI 포함된 이미지
@@ -32,12 +12,6 @@ services:
       RABBITMQ_DEFAULT_PASS: guest   # 기본 비밀번호
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq  # 데이터 영구 저장
-
-#  zipkin:
-#    image: openzipkin/zipkin
-#    container_name: zipkin
-#    ports:
-#      - "9411:9411"
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -63,10 +37,19 @@ services:
       - zookeeper
 
   sj-member-service:
-    image: sooong137/sj-member-service:1.0
+    image: sooong137/sj-member-service:1.1
     container_name: sj-member-service
-    ports:
-      - "8082:8080"
+#    ports:
+#      - "8082:8080"
+    network_mode: host   # EC2 내부 네트워크 사용
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - EUREKA_INSTANCE_IP_ADDRESS=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
+      - JAVA_OPTS=-Xmx512m -Xms256m
+    restart: always
+    depends_on:
+      - rabbitmq
+      - kafka
 
 volumes:
   rabbitmq_data:
