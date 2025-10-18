@@ -44,7 +44,7 @@ services:
     network_mode: host   # EC2 내부 네트워크 사용
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - EUREKA_INSTANCE_IP_ADDRESS=$(EUREKA_INSTANCE_IP_ADDRESS)
+      - EUREKA_INSTANCE_IP_ADDRESS=${EUREKA_INSTANCE_IP_ADDRESS}
       - JAVA_OPTS=-Xmx512m -Xms256m
     restart: always
     depends_on:
